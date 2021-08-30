@@ -1,9 +1,6 @@
 var express = require("express");
 var app = express();
 
-var http = require("http");
-const url = require("url");
-
 const path = require("path");
 const location = path.join(__dirname, "/db/");
 const db = require("electron-db");
@@ -26,8 +23,8 @@ async function sort(order, data) {
         ? -1
         : 1
       : order === "desc"
-      ? 1
-      : -1;
+        ? 1
+        : -1;
   });
 }
 
