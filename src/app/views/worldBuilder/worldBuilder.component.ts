@@ -8,7 +8,7 @@ import { items, itemCombinations } from "../../games/the-haunting/items";
 import { GameService } from "../game.service";
 import { iterateObject } from "../../games/the-haunting/utils";
 import { DialogueComponent } from "../events/dialogue.component";
-import { Dialogue } from "src/app/games/the-haunting/types";
+import { Dialogue, Game } from "src/app/games/the-haunting/types";
 @Component({
   selector: "app-world-builder",
   template: /*html*/ `
@@ -59,7 +59,9 @@ import { Dialogue } from "src/app/games/the-haunting/types";
         </ngb-panel>
       </ngb-accordion>
     </div>
-    <app-dialogue [dialogue]="dialogue"></app-dialogue>
+    <div *ngIf="dialogue">
+      <app-dialogue [dialogue]="dialogue"></app-dialogue>
+    </div>
   `,
 })
 export class WorldBuilderComponent implements OnInit {
@@ -81,44 +83,51 @@ export class WorldBuilderComponent implements OnInit {
       turns: [
         {
           music: null, // optional
-          soundEffect: null, // optional
+          sound: null, // optional
           character: "Chris",
           emotion: "normal",
           content:
             "Hey this is chris. I don't think much of myself to be honest.",
           position: "top",
-          sound: undefined,
         },
         {
           character: " Pastor Heisenberg",
           emotion: "inquisitive",
           content: "Is it cause you're haunted by a demon?",
           position: "bottom",
-          sound: undefined,
         },
         {
           character: "Chris",
           emotion: "angry",
           content: "Who are you?",
           position: "top",
-          sound: undefined,
         },
         {
           character: "Pastor Heisenberg",
           emotion: "inquisitive",
           content: "Your worst nightmare bub.",
           position: "bottom",
-          sound: undefined,
         },
         {
-          character: "NONE",
+          character: "Pastor Heisenberg",
           content: "what will you do?",
           position: "center",
-          sound: undefined,
+          prompt: {
+            content: "will you take this blessed blade?",
+            choices: [
+              {
+                id: "1",
+                content: "take item",
+                onClick: (gs: GameService) => {
+                  gs.addItem(items.blade);
+                },
+              },
+            ],
+          },
         },
       ],
       items: [undefined, undefined],
-      prompts: [],
+
       onEnd: () => console.log("this conversation is over!"),
     };
     // console.log(this.gameStructure.cutScenes, "cutScenes");

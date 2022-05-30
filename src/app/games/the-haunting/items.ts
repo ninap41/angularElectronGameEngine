@@ -1,20 +1,21 @@
+import { Game, Item } from "./types";
 import { randomId, removeInspect, openDialog } from "./utils";
 
 /* ------- !ITEMS-------- */
-export const items = {
+export const items: any = {
   blade: {
     id: randomId(),
     name: "Blade",
     combine: "Handle",
-    onCombine: (newItem, game) => {
+    onCombine: (newItem: any, game: any) => {
       return game;
     },
     uses: null,
     description:
       "A blade. Too dangerous to touch in current state-- you could hurt yourself.",
     oneTimeUse: false,
-    onUse: (user) => {
-      user.health -= 2;
+    onUse: (game: Game) => {
+      game.user.health -= 2;
       return "You hurt yourself. You should be careful!";
     },
   },
@@ -22,28 +23,28 @@ export const items = {
     id: randomId(),
     name: "Handle",
     combine: "Blade",
-    onCombine: (newItem, game) => {
+    onCombine: (game: Game) => {
       return game;
     },
     uses: null,
     description: "A handle for crafting.",
     oneTimeUse: false,
-    onUse: (user) => {
-      user.heath -= 2;
+    onUse: (game: Game) => {
+      game.user.health -= 2;
       return "Did nothing.";
     },
   },
   mysteriousNote: {
     id: randomId(),
     name: "Mysterious Note",
-    combines: "Lighter",
-    onCombine: (newItem, game) => {
+    combine: "Lighter",
+    onCombine: (newItem: any, game: any) => {
       return game;
     },
     uses: null,
     description: "A mysterious note that reads 'ghosts haunt this place'.",
     oneTimeUse: false,
-    onUse: (user) => {
+    onUse: (game: Game) => {
       return "You read the note";
     },
   },
@@ -51,13 +52,13 @@ export const items = {
     id: randomId(),
     name: "Flashlight",
     combine: "Battery",
-    onCombine: (newItem, game) => {
+    onCombine: (newItem: any, game: Game) => {
       return game;
     },
     uses: 4,
     description: "A mysterious note that reads 'ghosts haunt this place'.",
     oneTimeUse: false,
-    onUse: (user) => {
+    onUse: (game: Game) => {
       return "You read the note";
     },
   },
@@ -68,7 +69,7 @@ export const items = {
     onCombine: null,
     description: "A sharp knife for many uses",
     oneTimeUse: false,
-    onUse: (user) => {
+    onUse: (user: any) => {
       return "You read the note";
     },
   },

@@ -1,6 +1,18 @@
 import { randomId, removeInspect, openDialog, bold } from "./utils";
 import { items, itemCombinations } from "./items";
-import { Chapter, CutScene, Dialogue, Game, State } from "./types";
+import { GameService } from "src/app/views/game.service";
+import {
+  Chapter,
+  CutScene,
+  Dialogue,
+  Game,
+  Inspects,
+  Item,
+  State,
+  User,
+} from "./types";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatDialog } from "@angular/material/dialog";
 
 /* ------- !EVENTS ----- */
 
@@ -65,10 +77,21 @@ export const dialogue: Dialogue[] = [
         content: "what will you do?",
         position: "center",
         sound: undefined,
+        prompt: {
+          content: "Will You Take The Item?",
+          choices: [
+            {
+              id: "1",
+              content: "take item",
+              onClick: (game: Game) => {
+                game.user.bag.push(items.blade as unknown as Item);
+              },
+            },
+          ],
+        },
       },
     ],
     items: [undefined, undefined],
-    prompts: [],
     onEnd: (game: Game) => {
       console.log("ended dialogue");
       game.user.event = null;
@@ -77,12 +100,7 @@ export const dialogue: Dialogue[] = [
   },
 ];
 
-/* ------- !ITEMS-------- */
-
-/**** !COMBINATIONS  *******/
-
 export const chapter1: Chapter<any, any> = {
-  // chapter1
   cutScenes: cutScenes,
   dialogue: dialogue,
   itemCombinations: itemCombinations,
@@ -130,16 +148,12 @@ export const chapter1: Chapter<any, any> = {
           },
           item: items.mysteriousNote,
           needsForVisibility: { bag: "Flashlight" },
-          onAction: (
-            game: { user: { bag: any[]; acceptMessage: string } },
-            inspect: { item: { name: any } },
-            accessed: any
-          ) => {
+          onAction: (game: Game, inspect: Inspects, accessed: boolean) => {
             if (accessed) {
-              if (inspect.item) {
-                game.user.bag.push(inspect.item);
-                game.user.acceptMessage += `<br><br> You found  ${bold(
-                  inspect.item.name
+              if (inspect.instantItem) {
+                game.user.bag.push(inspect.instantItem);
+                game.acceptMessage += `<br><br> You found  ${bold(
+                  inspect.instantItem.name
                 )}`;
               }
               game = removeInspect(game, inspect);
@@ -169,20 +183,16 @@ export const chapter1: Chapter<any, any> = {
 
 /** GAME *** */
 export var haunting = {
-  user: {
-    state: "default", // room, shopkeep, battle, event, cutscene, will probably only have room and event for now.
-    chapter: "chapter1",
-    // img: "assets/the-perfect-murder/avatar.jpg",
-    worldPoint: null,
-    history: [], //worldPointHistory
-    bag: [items.blade, items.handle, items.flashlight], // Inventory
-    event: null,
-    importantMarker: [], // storyPoints that can influence events or inspects
-    affects: [], //statusAffects
-
-    health: 100,
-    fear: 0,
-    faith: 0,
-  },
   world: { chapter1: chapter1 },
+};
+
+export var hauntingUser: User = {
+  // img: "assets/the-perfect-murder/avatar.jpg",
+  worldPoint: null,
+  history: [], //worldPointHistory
+  bag: [items.blade, items.handle, items.flashlight], // Inventory
+  affects: [], //statusAffects
+  health: 100,
+  fear: 0,
+  faith: 0,
 };

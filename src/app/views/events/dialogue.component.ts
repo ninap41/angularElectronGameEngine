@@ -20,12 +20,33 @@ import { GameService } from "../game.service";
       <div
         class="py-2 w-100 d-flex flex-column justify-content-center align-items-center"
       >
-        <div class="py-2">
-          "{{ dialogue.turns[this.iterator.index].content }}"
+        <div
+          class="d-flex flex-column"
+          *ngIf="!dialogue.turns[this.iterator.index].prompt; else prompt"
+        >
+          <div class="py-2">
+            "{{ dialogue.turns[this.iterator.index].content }}"
+          </div>
+          <button class="btn py-2" (click)="this.iterator.next(this.gs.game)">
+            Continue
+          </button>
         </div>
-        <button class="btn py-2" (click)="this.iterator.next(this.gs.game)">
-          Continue
-        </button>
+
+        <ng-template #prompt>
+          <div
+            class="d-flex flex-column"
+            *ngFor="
+              let choice of dialogue.turns[this.iterator.index].prompt.choices
+            "
+          >
+            <div class="py-2">
+              {{ dialogue.turns[this.iterator.index].prompt.content }}<br />
+            </div>
+            <button (click)="choice.onClick(gs)" class="btn py-2">
+              {{ choice.content }}
+            </button>
+          </div>
+        </ng-template>
       </div>
     </div>
     <ng-template #noDialogue>

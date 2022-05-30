@@ -3,7 +3,7 @@ import { games } from "../games";
 import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { MessageComponent } from "./message.component";
-import { Game, State, User } from "../games/the-haunting/types";
+import { Game, Item, State, User } from "../games/the-haunting/types";
 import { bold } from "../games/the-haunting/utils";
 
 @Injectable({
@@ -19,7 +19,7 @@ export class GameService {
 
   newGame(title: string): void {
     this.game = {
-      world: games[title], // holds the game data
+      world: games[title].game.world, // holds the game data
       title, //game title
       state: State.room, // event type  'Dialogue' | 'CutScene' | 'Attack' | 'Puzzle' | 'Room'
       chapter: "chapter1",
@@ -27,16 +27,18 @@ export class GameService {
       denyMessage: null,
       acceptMessage: null,
       createdMessage: null,
+      event: null,
+      importantMarker: [], // storyPoints that can influence events or inspects
       user: {
-        event: null,
         ...games[title].user, //new character
         worldPoint:
-          games[title].world["chapter1"].rooms[
-            games[title].world["chapter1"].startingPoint
+          games[title].game.world["chapter1"].rooms[
+            games[title].game.world["chapter1"].startingPoint
           ], // starting point
         history: [],
       },
     };
+    console.log(games[title].game.world);
   }
 
   isGame(): boolean {
@@ -91,15 +93,18 @@ export class GameService {
   }
 
   combine(sourceItem, targetItem) {
+    console.log(this.game);
     if (sourceItem.combine) {
       var newItem;
-      this.game.world.itemCombinations.forEach((combination) => {
-        if (
-          combination.materials.includes(sourceItem.name) &&
-          combination.materials.includes(targetItem.name)
-        )
-          newItem = combination.item;
-      });
+      this.game.world[this.getChapter()].itemCombinations.forEach(
+        (combination) => {
+          if (
+            combination.materials.includes(sourceItem.name) &&
+            combination.materials.includes(targetItem.name)
+          )
+            newItem = combination.item;
+        }
+      );
       this.game.user.bag.push(newItem);
       this.game.createdMessage = `You created ${bold(newItem.name)}!`;
       this.game = sourceItem.onCombine(newItem, this.game);
@@ -108,6 +113,11 @@ export class GameService {
         (item) => item.id !== sourceItem.id && item.id !== targetItem.id
       );
     }
+  }
+
+  addItem(item: Item) {
+    this.game.user.bag.push(item);
+    console.log(this.game.user.bag);
   }
 
   /*======== ACCESS/DYNAMIC =========*/

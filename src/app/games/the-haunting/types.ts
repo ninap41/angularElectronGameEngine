@@ -1,3 +1,5 @@
+import { GameService } from "src/app/views/game.service";
+
 export interface Events {
   cutScenes: Map<string, CutScene>;
   dialogue?: Map<any, Dialogue>;
@@ -53,7 +55,18 @@ export interface Turns {
   content?: string | null;
   sound?: null;
   position?: string | null;
-  prompts?: (choices: Choices[]) => {};
+  prompt?: Prompt;
+}
+
+export interface Prompt {
+  content: string;
+  choices: [
+    {
+      id: "1";
+      content: "take item";
+      onClick: (game: Game | GameService) => {} | void;
+    }
+  ];
 }
 
 export interface Choices {
@@ -65,22 +78,23 @@ export interface Choices {
 export interface Game {
   world: Chapter<any, any>;
   title: string;
-  state: State;
+
   chapter: string;
   genericMessage?: string | null;
   denyMessage?: string | null;
   acceptMessage?: string | null;
   createdMessage?: string | null;
   user: User;
+  state: State;
+  importantMarker: string[];
+  event?: Dialogue | CutScene | Attack | Puzzle;
 }
 
 export interface User {
   affects: Affect[];
   bag?: Item[] | null;
-  event?: Dialogue | CutScene | Attack | Puzzle;
-  importantMarker?: any[] | null;
+  history: WorldPoint<any, any>[] | any[];
   worldPoint: WorldPoint<any, any>;
-
   health: number;
   fear: number;
   faith: number;
@@ -134,7 +148,7 @@ export interface NeedsForVisibility {
 export interface Item {
   id: number;
   name: string;
-  combines: string;
+  combine: string;
   description: string;
   oneTimeUse: boolean;
   affects: Affect[]; // can come from on Use be instant or last forever
@@ -162,11 +176,15 @@ export interface Chapter<Room, U> {
 export interface Item {
   id: number;
   name: string;
-  canOnlyBeUsedDuringState: string | "Dialogue" | "Attack";
-  combine: boolean;
-  onCombine?: (newItem?: Item, game?: Game) => {};
+  combines: string;
   description: string;
   oneTimeUse: boolean;
+  affects: Affect[]; // can come from on Use be instant or last forever
+  uses?: number | null; // if one time use true
+  onUse: (game: Game) => void | any;
+  canOnlyBeUsedDuringState?: string | "Dialogue" | "Attack";
+  combine: string;
+  onCombine?: (newItem?: Item, game?: Game) => {};
 }
 
 export class Iterator {

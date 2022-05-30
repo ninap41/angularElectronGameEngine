@@ -13,13 +13,13 @@ import { GameService } from "./game.service";
     <div>
       <ng-template #denyMessage> Deny Message </ng-template>
       <ng-template #acceptMessage>
-        <div [innerHTML]="gs.game.user.acceptMessage">
-          {{ gs.game.user.acceptMessage }}
+        <div [innerHTML]="gs.game.acceptMessage">
+          {{ gs.game.acceptMessage }}
         </div>
       </ng-template>
       <ng-template #createdMessage>
-        <div [innerHTML]="gs.game.user.createdMessage">
-          {{ gs.game.user.createMessage }}
+        <div [innerHTML]="gs.game.createdMessage">
+          {{ gs.game.createdMessage }}
         </div>
       </ng-template>
       <ng-template #viewItem>

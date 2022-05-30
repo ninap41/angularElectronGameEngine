@@ -13,12 +13,13 @@ import { GameService } from "./game.service";
   template: /*html*/ `
     <div class="px-3 py-3">
       <app-start> </app-start>
-      <div *ngIf="gs.isGame() && gs.game.user.state === 'default'">
+      <div *ngIf="gs.isGame()">
         <app-world></app-world>
         <app-bag></app-bag>
+        <app-message></app-message>
+        <pre> {{ this.gs.game | json }}</pre>
       </div>
     </div>
-    <app-message></app-message>
   `,
 })
 export class GameComponent implements AfterViewInit {
