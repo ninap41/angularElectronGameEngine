@@ -1,26 +1,52 @@
 /* You can add global styles to this file, and also import other style files */
 
+
+/* Importing Bootstrap SCSS file. */
+
+@import '~bootstrap/scss/bootstrap';
+@font-face {
+    font-family: 'spectral';
+    src: url('./assets/fonts/Spectral-Regular.ttf');
+}
+
 html,
 body {
-  height: 100%;
-  width: 100%;
-  margin: 0px !important;
-  padding: 0px !important;
-
-  //   background-color: #e4e4d7;
-  overflow-x: hidden;
+    height: 100%;
+    width: 100%;
+    margin: 0px !important;
+    padding: 0px !important;
+    overflow-x: hidden;
 }
-body {
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+
+body,
+* {
+    font-family: 'spectral' !important;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    font-family: 'spectral' !important;
 }
 
 a:hover {
-  text-decoration: none;
+    text-decoration: none;
 }
 
 p .indent {
-  text-indent: 50px;
+    text-indent: 50px;
 }
+
 // p {
 //   text-indent: 50px;
 // }
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: 'spectral' !important;
+}

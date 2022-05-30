@@ -10,6 +10,7 @@
     "declaration": false,
     "downlevelIteration": true,
     "experimentalDecorators": true,
+
     "module": "esnext",
     "moduleResolution": "node",
     "importHelpers": true,
@@ -18,6 +19,7 @@
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
+    "enableIvy": false,
     "strictInjectionParameters": true
   },
   "resolveJsonModule": true

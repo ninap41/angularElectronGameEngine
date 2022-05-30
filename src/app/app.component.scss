@@ -1,20 +1,18 @@
-@import "~bootstrap/dist/css/bootstrap.css";
-
-ul.ba,
-ul > *,
-li {
-  list-style-type: none !important;
+$mustard: rgb(213, 159, 52);
+$terracotta:rgb(221, 133, 94);
+$cameorose:rgb(228, 193, 185);
+$deepgreen: rgb(4, 56, 51);
+$steel: rgb(118, 134, 137);
+$canyonclay: rgb(210, 146, 124);
+a:hover {
+    color: $deepgreen
 }
 
-li > a {
-  color: white;
+body {
+    background-color: $steel !important;
 }
 
-li > a:hover {
-  color: pink;
-}
-#sourceText,
-code {
-  color: rgb(71, 218, 71) !important;
-  background-color: black !important;
-}
+// .world {
+//     min-height: 300px;
+//     height: 100%;
+// }
