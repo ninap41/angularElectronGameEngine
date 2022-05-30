@@ -10,6 +10,7 @@ export enum State {
   attack = "Attack",
   room = "Room",
   puzzle = "Puzzle",
+  gameOver = "GameOver",
 }
 
 export interface Enemy {}
@@ -26,6 +27,7 @@ export interface CutScene {
   music?: string | null;
   name: string;
   frames?: Frames[] | null;
+  onEnd: (game: Game) => void | any;
 }
 export interface Frames {
   src?: string;
@@ -38,11 +40,14 @@ export interface Frames {
 export interface Dialogue {
   name?: string | null;
   music?: string | null;
-  turns?: Turns[];
+  turns: Turns[] | null;
   items?: Item[] | null;
-  prompts?: () => {};
+  prompts?: any[];
+  onEnd: (game: Game) => void | any;
 }
 export interface Turns {
+  music?: string | null;
+  soundEffect?: string | null;
   character?: string | null;
   emotion?: string | null;
   content?: string | null;
@@ -54,7 +59,7 @@ export interface Turns {
 export interface Choices {
   name: string;
   description: string;
-  onAction?: (game: Game) => {};
+  onAction?: (game: Game) => void | any;
 }
 
 export interface Game {
@@ -87,8 +92,8 @@ export interface Room {
   description: string;
   directions?: Directions[] | null;
   inspects?: Inspects[] | null;
-  onEnter?: () => {};
-  onLeave?: () => {};
+  onEnter?: (game: Game) => void | any;
+  onLeave?: (game: Game) => void | any;
 }
 
 export interface WorldPoint<T, U> extends Room {
@@ -101,7 +106,7 @@ export interface Directions {
   description?: string | null;
   needsForAccess?: NeedsForAccess | null;
   needsForVisibility?: NeedsForVisibility | null;
-  onAction?: () => {};
+  onAction?: (game: Game) => void | any;
 }
 
 export interface Inspects {
@@ -110,16 +115,16 @@ export interface Inspects {
   needsForAccess?: NeedsForAccess;
   instantItem: Item;
   needsForVisibility: NeedsForVisibility;
-  onAction?: () => {};
+  onAction?: (game: Game) => void | any;
 }
 
 export interface NeedsForAccess {
   bag: string | string[] | null;
   conditions?: string | string[];
   acceptMessage?: string;
-  onAccept?: () => {};
+  onAccept?: (game: Game) => void | any;
   denyMessage?: string;
-  onDeny?: () => {};
+  onDeny?: (game: Game) => void | any;
 }
 export interface NeedsForVisibility {
   bag: string | string[] | null;
@@ -134,15 +139,15 @@ export interface Item {
   oneTimeUse: boolean;
   affects: Affect[]; // can come from on Use be instant or last forever
   uses?: number | null; // if one time use true
-  onUse: (game: Game) => {};
+  onUse: (game: Game) => void | any;
 }
 
 export interface Affect {
   stat: string;
   duration?: number;
   breakCondition: string;
-  onAffect: () => {};
-  onBreakCase: () => {};
+  onAffect: (game: Game) => void | any;
+  onBreakCase: (game: Game) => void | any;
 }
 
 export interface Chapter<Room, U> {
@@ -162,4 +167,33 @@ export interface Item {
   onCombine?: (newItem?: Item, game?: Game) => {};
   description: string;
   oneTimeUse: boolean;
+}
+
+export class Iterator {
+  index: number = 0;
+  end: number;
+  turn: Array<any>;
+  onEnd: any;
+  array: any;
+  finish: boolean = false;
+  constructor(array, onEnd) {
+    this.index = 0;
+    this.array = array;
+    this.end = array.length - 1;
+    this.onEnd = (game) => onEnd(game);
+  }
+
+  public endIteration(game: Game) {
+    this.onEnd(game);
+    this.finish = true;
+  }
+
+  public next(game: Game) {
+    if (this.index === this.end) {
+      console.log("end");
+      return this.endIteration(game);
+    } else {
+      this.index += 1;
+    }
+  }
 }

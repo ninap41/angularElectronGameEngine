@@ -77,10 +77,11 @@ export class WorldBuilderComponent implements OnInit {
     };
 
     this.dialogue = {
-      music: null,
       name: "testDialogue",
       turns: [
         {
+          music: null, // optional
+          soundEffect: null, // optional
           character: "Chris",
           emotion: "normal",
           content:
@@ -117,7 +118,8 @@ export class WorldBuilderComponent implements OnInit {
         },
       ],
       items: [undefined, undefined],
-      prompts: () => undefined,
+      prompts: [],
+      onEnd: () => console.log("this conversation is over!"),
     };
     // console.log(this.gameStructure.cutScenes, "cutScenes");
     // console.log(this.gameStructure.itemCombinations, "combinations");

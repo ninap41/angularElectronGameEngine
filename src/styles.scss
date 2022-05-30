@@ -3,10 +3,27 @@
 
 /* Importing Bootstrap SCSS file. */
 
+
+$mustard: rgb(213, 159, 52);
+$terracotta:rgb(221, 133, 94);
+$cameorose:rgb(228, 193, 185);
+$deepgreen: rgb(4, 56, 51);
+$steel: rgb(118, 134, 137);
+$canyonclay: rgb(210, 146, 124);
+
+// .world {
+//     min-height: 300px;
+//     height: 100%;
+// }
+
 @import '~bootstrap/scss/bootstrap';
 @font-face {
     font-family: 'spectral';
     src: url('./assets/fonts/Spectral-Regular.ttf');
+}
+@font-face {
+    font-family: 'spectral-bold';
+    src: url('./assets/fonts/Spectral-Bold.ttf');
 }
 
 html,
@@ -16,37 +33,26 @@ body {
     margin: 0px !important;
     padding: 0px !important;
     overflow-x: hidden;
-}
-
-body,
-* {
+    background-color: $cameorose;
+    color: $deepgreen;
     font-family: 'spectral' !important;
 }
 
-h1,
-h2,
-h3,
-h4 {
-    font-family: 'spectral' !important;
+h1,h2,h3,h4 {
+    font-family: 'spectral-bold' !important;
+    font-weight: 700;
+
 }
 
 a:hover {
     text-decoration: none;
+    color: $deepgreen
+
 }
 
 p .indent {
     text-indent: 50px;
 }
 
-// p {
-//   text-indent: 50px;
-// }
-html,
-body {
-    height: 100%;
-}
 
-body {
-    margin: 0;
-    font-family: 'spectral' !important;
-}
+

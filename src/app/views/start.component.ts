@@ -6,7 +6,7 @@ import { GameService } from "./game.service";
   template: /*html*/ `
     <div
       *ngIf="!gs.isGame()"
-      class="d-flex justify-content-center align-items-center world"
+      class="d-flex justify-content-center flex-column align-items-center world"
     >
       <h1>The Haunting</h1>
       <button class="btn btn-primary" (click)="start('The Haunting')">

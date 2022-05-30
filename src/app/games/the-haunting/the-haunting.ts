@@ -1,8 +1,7 @@
 import { randomId, removeInspect, openDialog, bold } from "./utils";
 import { items, itemCombinations } from "./items";
-import { Chapter, CutScene, Dialogue } from "./types";
-import { Event } from "three";
-import { Template } from "@angular/compiler/src/render3/r3_ast";
+import { Chapter, CutScene, Dialogue, Game, State } from "./types";
+
 /* ------- !EVENTS ----- */
 
 export const cutScenes: CutScene[] = [
@@ -23,6 +22,7 @@ export const cutScenes: CutScene[] = [
         sound: undefined,
       },
     ],
+    onEnd: () => {},
   },
 ];
 
@@ -68,7 +68,12 @@ export const dialogue: Dialogue[] = [
       },
     ],
     items: [undefined, undefined],
-    prompts: () => undefined,
+    prompts: [],
+    onEnd: (game: Game) => {
+      console.log("ended dialogue");
+      game.user.event = null;
+      game.state = State.room;
+    },
   },
 ];
 
@@ -86,7 +91,7 @@ export const chapter1: Chapter<any, any> = {
   rooms: {
     Bedroom: {
       name: "Bedroom",
-      img: "assets/the-perfect-murder/door.jpeg",
+      // img: "assets/the-perfect-murder/door.jpeg",
       description:
         "You are home with your boyfriend. He's been... pissing you off lately",
       directions: [
@@ -167,7 +172,7 @@ export var haunting = {
   user: {
     state: "default", // room, shopkeep, battle, event, cutscene, will probably only have room and event for now.
     chapter: "chapter1",
-    // img: 'assets/the-perfect-murder/avatar.jpg',
+    // img: "assets/the-perfect-murder/avatar.jpg",
     worldPoint: null,
     history: [], //worldPointHistory
     bag: [items.blade, items.handle, items.flashlight], // Inventory
