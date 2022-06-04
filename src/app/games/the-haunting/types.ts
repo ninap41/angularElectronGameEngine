@@ -8,25 +8,46 @@ export interface Events {
 
 export enum State {
   dialogue = "Dialogue",
-  cutsScene = "CutScene",
+  cutScene = "CutScene",
   attack = "Attack",
   room = "Room",
   puzzle = "Puzzle",
-  gameOver = "GameOver",
+  suddenEvent = "SuddenEvent",
+  gameOver = "Game Over",
 }
 
 export interface Enemy {}
-export interface Attack {
-  enemy: Enemy;
-  emotion: "base";
-  health: number;
-  attackPower: number;
+
+export interface SuddenEvent {
+  type: State.suddenEvent;
+  intro?: string[];
+  timed?: boolean;
+  time?: number;
+  name: string;
+  description: string;
+  prompts: Prompt[] | Choice[];
+  onTimeOut?: (gs: GameService) => {} | void;
+  outro?: string[];
 }
 
-export interface Puzzle {}
+export interface Attack {
+  type: State.attack;
+  name: string;
+  intro?: string[];
+  enemy?: Enemy | null;
+  outro?: string[];
+}
+
+export interface GameOver {
+  type: State.gameOver;
+}
+export interface Puzzle {
+  type: State.puzzle;
+}
 
 export interface CutScene {
   music?: string | null;
+  type: State.cutScene;
   name: string;
   frames?: Frames[] | null;
   onEnd: (game: Game) => void | any;
@@ -36,11 +57,12 @@ export interface Frames {
   continue: boolean;
   text?: null;
   sound?: null;
-  prompt?: (choices: Choices[]) => {};
+  prompt?: (choices: Choice[]) => {};
 }
 
 export interface Dialogue {
   name?: string | null;
+  type: State.dialogue;
   music?: string | null;
   turns: Turns[] | null;
   items?: Item[] | null;
@@ -60,19 +82,18 @@ export interface Turns {
 
 export interface Prompt {
   content: string;
-  choices: [
-    {
-      id: "1";
-      content: "take item";
-      onClick: (game: Game | GameService) => {} | void;
-    }
-  ];
+  needsForAccess?: NeedsForAccess;
+  needsForVisibility?: NeedsForVisibility;
+  choices: Choice[];
 }
 
-export interface Choices {
-  name: string;
-  description: string;
-  onAction?: (game: Game) => void | any;
+export interface Choice {
+  id?: number;
+  name?: string;
+  needsForAccess?: NeedsForAccess;
+  needsForVisibility?: NeedsForVisibility;
+  content: string;
+  onAction?: (gs: GameService) => void | any;
 }
 
 export interface Game {
@@ -126,15 +147,18 @@ export interface Directions {
 export interface Inspects {
   name: string;
   description: string;
-  needsForAccess?: NeedsForAccess;
+  chanceOfSuccess?: (gs: GameService, inspect: any) => {} | void;
+
   instantItem: Item;
-  needsForVisibility: NeedsForVisibility;
+  needsForAccess?: NeedsForAccess;
+  needsForVisibility?: NeedsForVisibility;
   onAction?: (game: Game) => void | any;
 }
 
 export interface NeedsForAccess {
-  bag: string | string[] | null;
+  bag?: string | string[] | null;
   conditions?: string | string[];
+  affects?: string | string[];
   acceptMessage?: string;
   onAccept?: (game: Game) => void | any;
   denyMessage?: string;
@@ -143,6 +167,7 @@ export interface NeedsForAccess {
 export interface NeedsForVisibility {
   bag: string | string[] | null;
   conditions?: string | string[];
+  affects?: string | string[];
 }
 
 export interface Item {
@@ -190,19 +215,19 @@ export interface Item {
 export class Iterator {
   index: number = 0;
   end: number;
-  turn: Array<any>;
   onEnd: any;
-  array: any;
+  array: Array<any>;
   finish: boolean = false;
   constructor(array, onEnd) {
     this.index = 0;
     this.array = array;
-    this.end = array.length - 1;
+    this.end = this.array.length - 1;
     this.onEnd = (game) => onEnd(game);
   }
 
   public endIteration(game: Game) {
     this.onEnd(game);
+
     this.finish = true;
   }
 

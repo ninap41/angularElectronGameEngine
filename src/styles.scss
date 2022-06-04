@@ -8,9 +8,14 @@ $mustard: rgb(213, 159, 52);
 $terracotta:rgb(221, 133, 94);
 $cameorose:rgb(228, 193, 185);
 $deepgreen: rgb(4, 56, 51);
+
 $steel: rgb(118, 134, 137);
 $canyonclay: rgb(210, 146, 124);
-
+$seagreen: #439f7b;
+$maroon: #2e0915;
+$text: #b7a987;
+$darkBlue: #092527;
+$bloodRed:rgb(243, 61, 61);
 // .world {
 //     min-height: 300px;
 //     height: 100%;
@@ -26,6 +31,11 @@ $canyonclay: rgb(210, 146, 124);
     src: url('./assets/fonts/Spectral-Bold.ttf');
 }
 
+@font-face {
+    font-family:'soul-maze' ;
+    src: url('./assets/fonts/MADESoulmazecopy/Desktop/MADESoulmazeBrush.otf');
+}
+
 html,
 body {
     height: 100%;
@@ -33,21 +43,36 @@ body {
     margin: 0px !important;
     padding: 0px !important;
     overflow-x: hidden;
-    background-color: $cameorose;
-    color: $deepgreen;
+    background-color: $darkBlue;
+    color: $text;
     font-family: 'spectral' !important;
 }
 
-h1,h2,h3,h4 {
-    font-family: 'spectral-bold' !important;
+h1, h2, h3, h4{
+    font-family: 'soul-maze' !important;
     font-weight: 700;
+    color: $bloodRed
+
+
+}
+
+h2 {
+    font-size: 24px !important;
+
+}
+h1 {
+    font-size: 80px !important;
 
 }
 
 a:hover {
     text-decoration: none;
-    color: $deepgreen
+    color: $text;
 
+}
+.navbar, .navbar-expand-lg, .navbar-dark, .bg-dark, nav > * {
+    color: $terracotta !important;
+    background-color: $deepgreen !important;
 }
 
 p .indent {

@@ -35,6 +35,10 @@ import { EventWrapperComponent } from "./views/events/eventWrapper.component";
 import { SpacerPipe } from "./games/the-haunting/spacer.pipe";
 import { DialogueComponent } from "./views/events/dialogue.component";
 
+import { TypingAnimationModule } from "angular-typing-animation";
+import { SuddenEventComponent } from "./views/events/suddenEvent.component";
+import { AttackComponent } from "./views/events/attack.component";
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -46,6 +50,8 @@ import { DialogueComponent } from "./views/events/dialogue.component";
     WorldBuilderComponent,
     EventWrapperComponent,
     DialogueComponent,
+    SuddenEventComponent,
+    AttackComponent,
     SpacerPipe,
   ],
 
@@ -59,6 +65,7 @@ import { DialogueComponent } from "./views/events/dialogue.component";
     FormsModule,
     ReactiveFormsModule,
     AppRoutingModule,
+    TypingAnimationModule,
 
     BrowserAnimationsModule,
 

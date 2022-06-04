@@ -2,23 +2,57 @@ import { randomId, removeInspect, openDialog, bold } from "./utils";
 import { items, itemCombinations } from "./items";
 import { GameService } from "src/app/views/game.service";
 import {
+  Attack,
   Chapter,
   CutScene,
   Dialogue,
   Game,
   Inspects,
   Item,
+  Prompt,
   State,
+  SuddenEvent,
   User,
 } from "./types";
-import { MatSnackBar } from "@angular/material/snack-bar";
-import { MatDialog } from "@angular/material/dialog";
 
 /* ------- !EVENTS ----- */
+
+export const suddenEvent: SuddenEvent[] = [
+  {
+    type: State.suddenEvent,
+    intro: ["a thing pops out in front of a thing", "it tries to attack you!"],
+    timed: true,
+    time: 5,
+    name: "Test Sudden Event",
+    description: "there is a thing before you. ",
+    prompts: [
+      {
+        content: "what do you do?",
+        choices: [
+          {
+            id: 9,
+            name: "",
+            content: "what do you do?",
+            needsForAccess: null,
+            needsForVisibility: null,
+            onAction: (gs: GameService) => {
+              console.log("gameOver");
+            },
+          },
+        ],
+      },
+    ],
+    onTimeOut: (gs: GameService) => {
+      return console.log("timeout");
+    },
+    outro: ["shit was easy!"],
+  },
+];
 
 export const cutScenes: CutScene[] = [
   {
     music: null,
+    type: State.cutScene,
     name: "testScene",
     frames: [
       {
@@ -38,53 +72,60 @@ export const cutScenes: CutScene[] = [
   },
 ];
 
+export const attacks: Attack[] = [
+  {
+    name: "Apparition",
+    intro: ["Hello..."],
+    type: State.attack,
+    enemy: null,
+    outro: ["the apparition dissipates"],
+  },
+];
+
 export const dialogue: Dialogue[] = [
   {
-    music: undefined,
     name: "testDialogue",
+    type: State.dialogue,
     turns: [
       {
+        music: null, // optional
+        sound: null, // optional
         character: "Chris",
         emotion: "normal",
         content:
           "Hey this is chris. I don't think much of myself to be honest.",
         position: "top",
-        sound: undefined,
       },
       {
         character: " Pastor Heisenberg",
         emotion: "inquisitive",
         content: "Is it cause you're haunted by a demon?",
         position: "bottom",
-        sound: undefined,
       },
       {
         character: "Chris",
         emotion: "angry",
         content: "Who are you?",
         position: "top",
-        sound: undefined,
       },
       {
         character: "Pastor Heisenberg",
         emotion: "inquisitive",
         content: "Your worst nightmare bub.",
         position: "bottom",
-        sound: undefined,
       },
       {
-        character: "NONE",
+        character: "Pastor Heisenberg",
         content: "what will you do?",
         position: "center",
-        sound: undefined,
         prompt: {
-          content: "Will You Take The Item?",
+          content: "will you take this blessed blade?",
           choices: [
             {
-              id: "1",
+              id: 1,
               content: "take item",
-              onClick: (game: Game) => {
-                game.user.bag.push(items.blade as unknown as Item);
+              onAction: (gs: GameService) => {
+                gs.addItem(items.blade);
               },
             },
           ],
@@ -92,11 +133,8 @@ export const dialogue: Dialogue[] = [
       },
     ],
     items: [undefined, undefined],
-    onEnd: (game: Game) => {
-      console.log("ended dialogue");
-      game.user.event = null;
-      game.state = State.room;
-    },
+
+    onEnd: () => console.log("this conversation is over!"),
   },
 ];
 
@@ -134,7 +172,6 @@ export const chapter1: Chapter<any, any> = {
           name: "Living Room",
           needsForAccess: null,
           needsForVisibility: null,
-          onAction: null,
         },
       ],
       inspects: [
@@ -143,24 +180,22 @@ export const chapter1: Chapter<any, any> = {
           description: "It's your diary, there is a band constricted by a lock",
           needsForAccess: {
             bag: "Flashlight",
-            denyMessage: "You can't open the diary.",
+            denyMessage: "You read the diary the diary.",
             acceptMessage: "You're able to read the diary.",
           },
           item: items.mysteriousNote,
           needsForVisibility: { bag: "Flashlight" },
-          onAction: (game: Game, inspect: Inspects, accessed: boolean) => {
+          onAction: (inspect: Inspects, accessed: boolean, gs: GameService) => {
             if (accessed) {
               if (inspect.instantItem) {
-                game.user.bag.push(inspect.instantItem);
-                game.acceptMessage += `<br><br> You found  ${bold(
+                gs.game.user.bag.push(inspect.instantItem);
+                gs.game.acceptMessage += `<br><br> You found  ${bold(
                   inspect.instantItem.name
                 )}`;
               }
-              game = removeInspect(game, inspect);
-              return game;
-            } else {
-              return game;
+              gs.game = removeInspect(gs.game, inspect);
             }
+            return;
           },
         },
       ],
@@ -183,7 +218,7 @@ export const chapter1: Chapter<any, any> = {
 
 /** GAME *** */
 export var haunting = {
-  world: { chapter1: chapter1 },
+  world: { chapter1: chapter1, chapter2a: chapter1 },
 };
 
 export var hauntingUser: User = {

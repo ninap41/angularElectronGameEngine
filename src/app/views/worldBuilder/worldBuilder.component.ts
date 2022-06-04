@@ -8,7 +8,12 @@ import { items, itemCombinations } from "../../games/the-haunting/items";
 import { GameService } from "../game.service";
 import { iterateObject } from "../../games/the-haunting/utils";
 import { DialogueComponent } from "../events/dialogue.component";
-import { Dialogue, Game } from "src/app/games/the-haunting/types";
+import {
+  Dialogue,
+  Game,
+  State,
+  SuddenEvent,
+} from "src/app/games/the-haunting/types";
 @Component({
   selector: "app-world-builder",
   template: /*html*/ `
@@ -59,8 +64,8 @@ import { Dialogue, Game } from "src/app/games/the-haunting/types";
         </ngb-panel>
       </ngb-accordion>
     </div>
-    <div *ngIf="dialogue">
-      <app-dialogue [dialogue]="dialogue"></app-dialogue>
+    <div *ngIf="suddenEvent">
+      <app-event-wrapper [event]="suddenEvent"></app-event-wrapper>
     </div>
   `,
 })
@@ -69,6 +74,8 @@ export class WorldBuilderComponent implements OnInit {
   str: any;
   output: any;
   dialogue: Dialogue;
+  suddenEvent: SuddenEvent;
+
   constructor(public gs: GameService) {
     this.gameStructure = {
       haunting,
@@ -78,8 +85,42 @@ export class WorldBuilderComponent implements OnInit {
       dialogue: iterateObject(dialogue),
     };
 
+    this.suddenEvent = {
+      type: State.suddenEvent,
+      intro: [
+        "a thing pops out in front of a thing",
+        "it tries to attack you!",
+      ],
+      timed: true,
+      time: 3,
+      name: "Test Sudden Event",
+      description: "there is a thing before you. ",
+      prompts: [
+        {
+          content: "what do you do?",
+          choices: [
+            {
+              id: 9,
+              name: "",
+              content: "what do you do?",
+              needsForAccess: null,
+              needsForVisibility: null,
+              onAction: (gs: GameService) => {
+                console.log("gameOver");
+              },
+            },
+          ],
+        },
+      ],
+      onTimeOut: (gs: GameService) => {
+        return console.log("timeout");
+      },
+      outro: ["shit was easy!"],
+    };
+
     this.dialogue = {
       name: "testDialogue",
+      type: State.dialogue,
       turns: [
         {
           music: null, // optional
@@ -116,10 +157,11 @@ export class WorldBuilderComponent implements OnInit {
             content: "will you take this blessed blade?",
             choices: [
               {
-                id: "1",
+                id: 1,
                 content: "take item",
-                onClick: (gs: GameService) => {
+                onAction: (gs: GameService) => {
                   gs.addItem(items.blade);
+                  return;
                 },
               },
             ],
