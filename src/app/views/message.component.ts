@@ -11,10 +11,15 @@ import { GameService } from "./game.service";
   selector: "app-message",
   template: /*html*/ `
     <div>
-      <ng-template #denyMessage> Deny Message </ng-template>
+      <ng-template #denyMessage> {{ gs.game.denyMessage }} </ng-template>
       <ng-template #acceptMessage>
         <div [innerHTML]="gs.game.acceptMessage">
           {{ gs.game.acceptMessage }}
+        </div>
+      </ng-template>
+      <ng-template #genericMessages>
+        <div [innerHTML]="gs.game.genericMessage">
+          {{ gs.game.genericMessage }}
         </div>
       </ng-template>
       <ng-template #createdMessage>
@@ -33,6 +38,7 @@ export class MessageComponent implements AfterViewInit {
   @ViewChild("denyMessage") denyMessage: TemplateRef<any>;
   @ViewChild("acceptMessage") acceptMessage: TemplateRef<any>;
   @ViewChild("createdMessage") createdMessage: TemplateRef<any>;
+  @ViewChild("genericMessage") genericMessage: TemplateRef<any>;
   @ViewChild("viewItem") viewItem: TemplateRef<any>;
 
   ngAfterViewInit(): void {
@@ -40,6 +46,7 @@ export class MessageComponent implements AfterViewInit {
     this.gs.templates = {
       denyMessage: this.denyMessage,
       acceptMessage: this.acceptMessage,
+      genericMessage: this.genericMessage,
       createdMessage: this.createdMessage,
       viewItem: this.viewItem,
     };

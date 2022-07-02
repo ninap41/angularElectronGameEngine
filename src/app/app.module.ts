@@ -33,11 +33,17 @@ import { WorldBuilderComponent } from "./views/worldBuilder/worldBuilder.compone
 import { WorldComponent } from "./views/world.component";
 import { EventWrapperComponent } from "./views/events/eventWrapper.component";
 import { SpacerPipe } from "./games/the-haunting/spacer.pipe";
+
 import { DialogueComponent } from "./views/events/dialogue.component";
 
 import { TypingAnimationModule } from "angular-typing-animation";
 import { SuddenEventComponent } from "./views/events/suddenEvent.component";
 import { AttackComponent } from "./views/events/attack.component";
+import { DirectionsComponent } from "./views/directions.component";
+import { InspectsComponent } from "./views/inspects.component";
+import { DialogComponent } from "./views/dialog.component";
+import { ReplacerPipe } from "./games/the-haunting/replacer.pipe";
+import { CutsceneComponent } from "./views/events/cutscene.component";
 
 @NgModule({
   declarations: [
@@ -51,8 +57,13 @@ import { AttackComponent } from "./views/events/attack.component";
     EventWrapperComponent,
     DialogueComponent,
     SuddenEventComponent,
+    DirectionsComponent,
+    DialogComponent,
+    InspectsComponent,
     AttackComponent,
+    ReplacerPipe,
     SpacerPipe,
+    CutsceneComponent,
   ],
 
   imports: [
@@ -81,6 +92,8 @@ import { AttackComponent } from "./views/events/attack.component";
     NgbModule,
   ],
   schemas: [NO_ERRORS_SCHEMA],
+  entryComponents: [DialogComponent, MessageComponent],
+
   providers: [
     GameService,
     FormBuilder,

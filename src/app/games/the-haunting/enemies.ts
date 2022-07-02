@@ -11,10 +11,8 @@ const theApparition = {
     description: "A floating apparition. It does not appear hostile.",
     attack: 10,
     moves: [ 'Spook', 'Premonition']
-
-
 }
 
 export enum Enemies {
-    theapparition= 
+   
 }

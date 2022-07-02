@@ -19,10 +19,13 @@ import { GameService } from "../game.service";
       </div>
       <div *ngSwitchCase="state.puzzle" [puzzle]="event">Puzzle</div>
       <div *ngSwitchCase="state.attack" [attack]="event">Attack</div>
-      <div *ngSwitchCase="state.cutScene" [cutScene]="event">>CutScene</div>
+
+      <div *ngSwitchCase="state.cutScene">
+        <app-cut-scene [cutscene]="event"></app-cut-scene>
+      </div>
+
       <div *ngSwitchCase="state.suddenEvent">
         <app-sudden-event [suddenEvent]="event"></app-sudden-event>
-
         <div *ngSwitchDefault>not a dialogue or one of the above</div>
       </div>
     </div>

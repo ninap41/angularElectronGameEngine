@@ -9,22 +9,24 @@ import { GameService } from "../game.service";
 import { iterateObject } from "../../games/the-haunting/utils";
 import { DialogueComponent } from "../events/dialogue.component";
 import {
+  CutScene,
   Dialogue,
   Game,
   State,
   SuddenEvent,
 } from "src/app/games/the-haunting/types";
+// https://stackblitz.com/run?file=src%2Fapp%2Ftree-nested-overview-example.ts
 @Component({
   selector: "app-world-builder",
   template: /*html*/ `
-    <button mat-button [matMenuTriggerFor]="menu">Items</button>
+    <button mat-button [matMenuTriggerFor]="menu">All Items</button>
     <mat-menu #menu="matMenu">
       <span *ngFor="let item of gameStructure.items">
         <button mat-menu-item (click)="stringify(item)">{{ item.name }}</button>
       </span>
     </mat-menu>
     <button mat-button [matMenuTriggerFor]="itemCombinationsMenu">
-      Item Combinations
+      All Item Combinations
     </button>
     <mat-menu #itemCombinationsMenu="matMenu">
       <span *ngFor="let item of gameStructure.itemCombinations">
@@ -64,8 +66,8 @@ import {
         </ngb-panel>
       </ngb-accordion>
     </div>
-    <div *ngIf="suddenEvent">
-      <app-event-wrapper [event]="suddenEvent"></app-event-wrapper>
+    <div *ngIf="cutscene">
+      <app-event-wrapper [event]="cutscene"></app-event-wrapper>
     </div>
   `,
 })
@@ -75,6 +77,7 @@ export class WorldBuilderComponent implements OnInit {
   output: any;
   dialogue: Dialogue;
   suddenEvent: SuddenEvent;
+  cutscene: CutScene;
 
   constructor(public gs: GameService) {
     this.gameStructure = {
@@ -83,6 +86,38 @@ export class WorldBuilderComponent implements OnInit {
       items: iterateObject(items),
       cutScenes: iterateObject(cutScenes),
       dialogue: iterateObject(dialogue),
+    };
+
+    this.cutscene = {
+      music: null,
+      type: State.cutScene,
+      name: "testScene",
+      frames: [
+        {
+          src: "/assets/the-haunting/cutscene/chapter1_cutsceneARRIVAL_1.gif",
+          mode: "continue",
+          text: undefined,
+          sound: undefined,
+        },
+        {
+          src: "/assets/the-haunting/cutscene/chapter1_cutsceneARRIVAL_2.gif",
+          mode: "continue",
+
+          text: undefined,
+          sound: undefined,
+        },
+        {
+          src: "/assets/the-haunting/cutscene/chapter1_cutsceneARRIVAL_3.gif",
+          mode: "continue",
+
+          text: undefined,
+          sound: undefined,
+        },
+      ],
+      onEnd: (gs: GameService) => {
+        console.log("thiscutscene is over!");
+        //destroy event from service
+      },
     };
 
     this.suddenEvent = {
@@ -161,6 +196,7 @@ export class WorldBuilderComponent implements OnInit {
                 content: "take item",
                 onAction: (gs: GameService) => {
                   gs.addItem(items.blade);
+
                   return;
                 },
               },

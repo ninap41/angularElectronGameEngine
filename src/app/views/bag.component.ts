@@ -1,15 +1,16 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
+import { Item } from "../games/the-haunting/types";
 import { GameService } from "./game.service";
 
 @Component({
   selector: "app-bag",
   template: /*html*/ `
-    <div class="px-3 py-3">
-      <p class="title">Inventory ({{ gs.game.user.bag.length }})</p>
+    <div *ngIf="items.length > 0" class="px-3 py-3">
+      <p class="title">Inventory ({{ items.length }})</p>
       <div>
         <mat-grid-list cols="4" rowHeight="1:1">
-          <div *ngFor="let item of gs.game.user.bag">
+          <div *ngFor="let item of items">
             <mat-grid-tile>
               <button mat-button id="itemSlot" [matMenuTriggerFor]="useItem">
                 {{ item.name }}
@@ -26,7 +27,7 @@ import { GameService } from "./game.service";
                 </button>
               </mat-menu>
               <mat-menu #combine="matMenu">
-                <span *ngFor="let dropdownItem of gs.game.user.bag">
+                <span *ngFor="let dropdownItem of items">
                   <span
                     mat-menu-item
                     [disabled]="!gs.canCombine(item, dropdownItem)"
@@ -46,6 +47,7 @@ import { GameService } from "./game.service";
   `,
 })
 export class BagComponent implements OnInit {
+  @Input("items") items: Item[];
   constructor(public router: Router, public gs: GameService) {}
   ngOnInit() {}
 }

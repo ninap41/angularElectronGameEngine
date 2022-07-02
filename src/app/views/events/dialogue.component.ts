@@ -96,16 +96,16 @@ export class DialogueComponent implements OnInit {
   ngOnInit(): void {
     this.dialogue = this.dialogue;
     this.iterator = new Iterator(this.dialogue.turns, () =>
-      this.dialogue.onEnd(this.gs.game)
+      this.dialogue.onEnd(this.gs)
     );
 
     // setTimeout(() => (this.start = true), 500);
   }
-  next() {
-    this.iterator.next(this.gs.game);
-    this.cdr.detectChanges();
-    // this.start = true;
-  }
+  // next() {
+  //   this.iterator.next(this.gs.game);
+  //   this.cdr.detectChanges();
+  //   // this.start = true;
+  // }
   // onTypingAnimationComplete() {
   //   console.log("complete");
   //   this.start = false;

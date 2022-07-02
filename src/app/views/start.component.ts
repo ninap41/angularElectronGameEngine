@@ -34,7 +34,9 @@ import { GameService } from "./game.service";
   ],
 })
 export class StartComponent implements OnInit {
-  constructor(public router: Router, public gs: GameService) {}
+  constructor(public router: Router, public gs: GameService) {
+    // this.start("The Haunting");
+  }
 
   ngOnInit(): void {}
   start(game: any): void {

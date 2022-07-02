@@ -7,7 +7,7 @@ import {
   CutScene,
   Dialogue,
   Game,
-  Inspects,
+  Inspect,
   Item,
   Prompt,
   State,
@@ -57,13 +57,13 @@ export const cutScenes: CutScene[] = [
     frames: [
       {
         src: "http://placekitten.com/g/200/300",
-        continue: true,
+        mode: "continue",
         text: undefined,
         sound: undefined,
       },
       {
         src: "http://placekitten.com/g/200/300",
-        continue: true,
+        mode: "continue",
         text: undefined,
         sound: undefined,
       },
@@ -134,7 +134,9 @@ export const dialogue: Dialogue[] = [
     ],
     items: [undefined, undefined],
 
-    onEnd: () => console.log("this conversation is over!"),
+    onEnd: (gs: GameService) => {
+      return console.log("this conversation is over!");
+    },
   },
 ];
 
@@ -149,14 +151,15 @@ export const chapter1: Chapter<any, any> = {
       name: "Bedroom",
       // img: "assets/the-perfect-murder/door.jpeg",
       description:
-        "You are home with your boyfriend. He's been... pissing you off lately",
+        "*green-s* You are home with your *CHARNAME*.  *green-e* He's been...  *red-s*pissing you off  *red-e* lately",
       directions: [
         {
           name: "Bathroom",
-          description: "It's your diary, there is a band constricted by a lock",
+          description: "Go to the bathroom",
           needsForAccess: null,
           needsForVisibility: null,
           onAction: null,
+          newChapter: null,
         },
         {
           name: "Kitchen",
@@ -164,37 +167,27 @@ export const chapter1: Chapter<any, any> = {
             bag: "House Key",
             acceptMessage:
               "You used *green*HOUSE KEY*green* to go into the kitchen.",
+            denyMessage: "The door is locked",
           },
           needsForVisibility: { bag: "Flashlight" },
           onAction: null,
-        },
-        {
-          name: "Living Room",
-          needsForAccess: null,
-          needsForVisibility: null,
         },
       ],
       inspects: [
         {
           name: "Look At Diary",
-          description: "It's your diary, there is a band constricted by a lock",
+          description: "It's your diary, it's too dark to read.",
           needsForAccess: {
             bag: "Flashlight",
-            denyMessage: "You read the diary the diary.",
-            acceptMessage: "You're able to read the diary.",
+            denyMessage:
+              "you pick up the diary and turn it in your hand. nothing out of the ordinary, but it's too dark to see",
+            acceptMessage:
+              "You read the diary using your flashlight. View diary in bag.",
           },
-          item: items.mysteriousNote,
+          items: [],
+          instantItem: items.diary,
           needsForVisibility: { bag: "Flashlight" },
-          onAction: (inspect: Inspects, accessed: boolean, gs: GameService) => {
-            if (accessed) {
-              if (inspect.instantItem) {
-                gs.game.user.bag.push(inspect.instantItem);
-                gs.game.acceptMessage += `<br><br> You found  ${bold(
-                  inspect.instantItem.name
-                )}`;
-              }
-              gs.game = removeInspect(gs.game, inspect);
-            }
+          onAction: async (gs, inspect) => {
             return;
           },
         },
@@ -203,6 +196,19 @@ export const chapter1: Chapter<any, any> = {
     Bathroom: {
       name: "Bathroom",
       description: "You're in the bathroom. Do you have to go?",
+      directions: [
+        {
+          name: "Bedroom",
+          needsForAccess: null,
+          needsForVisibility: null,
+          onAction: null,
+        },
+      ],
+      inspects: [],
+    },
+    Kitchen: {
+      name: "Kitchen",
+      description: "get some cheese",
       directions: [
         {
           name: "Bedroom",
@@ -224,10 +230,89 @@ export var haunting = {
 export var hauntingUser: User = {
   // img: "assets/the-perfect-murder/avatar.jpg",
   worldPoint: null,
-  history: [], //worldPointHistory
-  bag: [items.blade, items.handle, items.flashlight], // Inventory
-  affects: [], //statusAffects
+  worldHistory: [],
+  bag: [items.blade, items.handle, items.flashlight, items.HouseKey],
   health: 100,
   fear: 0,
+  will: 0,
   faith: 0,
+  eventHistory: [],
+  state: [],
 };
+
+/* GAME OVERVIEW
+
+WORLD UI cycles 
+  MAIN 
+      DIRECTIONS -- some hidden, some shown
+        -- lead to new room optional w/ conditions 
+        -- onEnter EVENT optional w/ conditions 
+        -- onLeave EVENT optional w/ conditions 
+      INSPECTS
+        -- lead to new room optional w/ conditions 
+        -- onChoice can lead to new ITEM, AFFECT, STATE, or EVENT.
+        
+
+  EVENT
+    DIALOGUE ((START) -> (END)) --- discovery ONEND bag, new DIRECTION, new EVENT,
+    BATTLE ((START) -> (END)) --- discovery ONEND bag, new DIRECTION, new EVENT,
+    DISCOVERY --- discovery ONEND bag, new DIRECTION, new EVENT,
+    CUTSCENE ((START) -> (END)) --> discovery ONEND bag, new DIRECTION, new EVENT,
+    PUZZLE
+      ((START) || (GIVEUP) -> (END)) --> discovery ONEND bag, new DIRECTION, new EVENT,
+//////// HIDDEN - AFFECTS story affects 
+EVENT HISTORY
+STATS 
+    HEALTH
+    WILL
+    FEAR
+    FAITH
+    STATE
+        affect state  FEAR & FAITH & WILL based.
+        INEBRIATED  Timed?.
+        COLD perTurn turnTimeout
+        HOT perTurn turnTimeout
+        DEPRESSED - makes you more unlikable to be around. 
+        FRIGHTENED - makes you susceptible to paranormal attacks
+        CURSED - influences an ending
+        SCARED SHITLESS - makes you susceptible to instant death
+        IN GOOD COMPANY - have an ally during attacks 
+BAG * bag interface *
+  bag interface can combine. Going to bag does NOT stop timer.
+HELP
+
+  
+STORY OVERVIEW
+Chris is a 21 year old kid who didn't have a lot going for him. 
+His parents died of mysterious circumstances
+
+Bathroom
+
+Bedroom
+   Inspect COMPUTER hidden by CLUE : SCRATCHES
+   Inspect CELLPHONE hidden by Affect READJOURNAL : SCRATCHES
+
+EVENT 'CELLPHONE'
+    FRONT DOOR
+    INSPECTS: 
+        CALL GIRLFRIEND (obtain AFFECT : CALLED SADIE ) or 
+        READ TEXT or 
+        LOOK AT PHOTOS or 
+        CLOSE PHONE
+
+ROOM: BATHROOM
+    INSPECT: LOOK IN MIRROR leads to IMMEDIATE EVENT spook and fear increases by 12
+
+INSPECT answer door hidden by AFFECT: DOORBELLRUNG
+
+alternate DIALOGUE EVENTS
+  GIRLFRIEND  conditions
+  PASTOR HEISENBERG
+
+
+
+pastor Door Affects: 'chrisClosedDoorOnPastor'
+
+
+
+NEXT CHAPTERS: */

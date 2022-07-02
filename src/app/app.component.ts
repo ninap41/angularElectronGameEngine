@@ -1,5 +1,6 @@
 import { Component, TemplateRef, ViewEncapsulation } from "@angular/core";
 import { faGamepad } from "@fortawesome/free-solid-svg-icons";
+import { DialogComponent } from "./views/dialog.component";
 import { GameService } from "./views/game.service";
 import { MessageComponent } from "./views/message.component";
 
@@ -13,7 +14,7 @@ import { MessageComponent } from "./views/message.component";
       <a
         class="text-light bg-dark"
         routerLinkActive="active"
-        [routerLink]="['/']"
+        [routerLink]="['']"
         >home</a
       >
 
@@ -32,5 +33,7 @@ export class AppComponent {
   faGamepad = faGamepad;
   title = "website";
 
-  constructor(public gs: GameService) {}
+  constructor(public gs: GameService) {
+    this.gs.newGame("The Haunting");
+  }
 }

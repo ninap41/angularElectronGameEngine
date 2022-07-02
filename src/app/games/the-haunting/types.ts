@@ -50,11 +50,11 @@ export interface CutScene {
   type: State.cutScene;
   name: string;
   frames?: Frames[] | null;
-  onEnd: (game: Game) => void | any;
+  onEnd: (gs: GameService) => void | any;
 }
 export interface Frames {
   src?: string;
-  continue: boolean;
+  mode: string;
   text?: null;
   sound?: null;
   prompt?: (choices: Choice[]) => {};
@@ -67,7 +67,7 @@ export interface Dialogue {
   turns: Turns[] | null;
   items?: Item[] | null;
   prompts?: any[];
-  onEnd: (game: Game) => void | any;
+  onEnd: (gs: GameService) => void | any;
 }
 export interface Turns {
   music?: string | null;
@@ -106,53 +106,59 @@ export interface Game {
   acceptMessage?: string | null;
   createdMessage?: string | null;
   user: User;
+
   state: State;
   importantMarker: string[];
   event?: Dialogue | CutScene | Attack | Puzzle;
 }
 
+export interface Clue {}
+export interface CharacterState {}
 export interface User {
-  affects: Affect[];
+  worldHistory: Direction[];
+  eventHistory: string[];
+  worldPoint: Direction;
+  state: Affect[]; //affects the person
+  clues?: Clue[];
   bag?: Item[] | null;
-  history: WorldPoint<any, any>[] | any[];
-  worldPoint: WorldPoint<any, any>;
   health: number;
-  fear: number;
-  faith: number;
+  fear?: number;
+  will?: number;
+  faith?: number;
 }
 
 export interface Room {
   name: string;
   img?: string;
   description: string;
-  directions?: Directions[] | null;
-  inspects?: Inspects[] | null;
-  onEnter?: (game: Game) => void | any;
-  onLeave?: (game: Game) => void | any;
+  directions?: Direction[] | null;
+  inspects?: Inspect[] | null;
+  onEnter?: (game: GameService) => void | any;
+  onLeave?: (game: GameService) => void | any;
 }
 
-export interface WorldPoint<T, U> extends Room {
-  endGame?: boolean;
-  nextChapter?: boolean;
-}
-
-export interface Directions {
+export interface Direction {
   name: string;
   description?: string | null;
   needsForAccess?: NeedsForAccess | null;
+  denyMessage?: string | null;
   needsForVisibility?: NeedsForVisibility | null;
-  onAction?: (game: Game) => void | any;
+  onAction?: (game: GameService) => void | any;
+  eventHistory?: string;
+  inspects?: Inspect[] | null;
+  newChapter?: string;
+  img?: string | null;
 }
 
-export interface Inspects {
+export interface Inspect {
   name: string;
   description: string;
   chanceOfSuccess?: (gs: GameService, inspect: any) => {} | void;
-
+  items: Item[];
   instantItem: Item;
   needsForAccess?: NeedsForAccess;
   needsForVisibility?: NeedsForVisibility;
-  onAction?: (game: Game) => void | any;
+  onAction?: (game: GameService, inspect: Inspect) => void | any;
 }
 
 export interface NeedsForAccess {
@@ -170,23 +176,12 @@ export interface NeedsForVisibility {
   affects?: string | string[];
 }
 
-export interface Item {
-  id: number;
-  name: string;
-  combine: string;
-  description: string;
-  oneTimeUse: boolean;
-  affects: Affect[]; // can come from on Use be instant or last forever
-  uses?: number | null; // if one time use true
-  onUse: (game: Game) => void | any;
-}
-
 export interface Affect {
   stat: string;
   duration?: number;
   breakCondition: string;
-  onAffect: (game: Game) => void | any;
-  onBreakCase: (game: Game) => void | any;
+  onAffect: (game: GameService) => void | any;
+  onBreakCase: (game: GameService) => void | any;
 }
 
 export interface Chapter<Room, U> {
@@ -203,10 +198,15 @@ export interface Item {
   name: string;
   combines: string;
   description: string;
+  longDescriptions: any[];
   oneTimeUse: boolean;
   affects: Affect[]; // can come from on Use be instant or last forever
   uses?: number | null; // if one time use true
-  onUse: (game: Game) => void | any;
+  onUse?: (
+    game: GameService,
+    item?: Item,
+    conditionsToUse?: boolean
+  ) => void | any;
   canOnlyBeUsedDuringState?: string | "Dialogue" | "Attack";
   combine: string;
   onCombine?: (newItem?: Item, game?: Game) => {};

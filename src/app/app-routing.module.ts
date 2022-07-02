@@ -4,8 +4,10 @@ import { GameComponent } from "./views/game.component";
 import { WorldBuilderComponent } from "./views/worldBuilder/worldBuilder.component";
 
 const routes: Routes = [
-  { path: "", component: GameComponent },
-  { path: "worldBuilder", component: WorldBuilderComponent },
+  { path: "", component: GameComponent, pathMatch: "full" },
+  { path: "home", component: GameComponent },
+
+  { path: "worldBuilder", component: WorldBuilderComponent, pathMatch: "full" },
 ];
 
 @NgModule({

@@ -1,3 +1,5 @@
+import { GameService } from "src/app/views/game.service";
+
 export function openDialog(dialog, ref) {
   dialog.open(ref);
 }
@@ -9,14 +11,14 @@ export function bold(val) {
   return "<b>" + val + "</b>";
 }
 
-export function removeInspect(game, inspect) {
-  game.world[game.user.worldPoint.name].inspects = game.world[
-    game.user.worldPoint.name
-  ].inspects.filter((i) => i.name !== inspect.name);
-  game.user.worldPoint.inspects = game.user.worldPoint.inspects.filter(
-    (i) => i.name !== inspect.name
+export function removeInspect(gs: GameService, inspect) {
+  console.log(
+    "jhkhj",
+    gs.game.world[gs.getChapter()].rooms[gs.game.user.worldPoint.name]
   );
-  return game;
+
+  gs.game.world[gs.getChapter()].rooms[gs.game.user.worldPoint.name].inspects =
+    gs.game.user.worldPoint.inspects.filter((i) => i.name !== inspect.name);
 }
 
 export function randomId() {
